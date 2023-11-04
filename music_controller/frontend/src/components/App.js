@@ -1,16 +1,19 @@
 import React, { Component } from "react";
-import { render } from "react-dom"
+import { render } from "react-dom";
+import HomePage from "./HomePage";
+import { BrowserRouter as Router } from 'react-router-dom'
 
 export default class App extends Component {
-    constructor(props) {
-        super(props);
-    }
+  constructor(props) {
+    super(props);
+  }
 
-    render() {
-        return <h1>Testing React Code</h1>
-    }
-
+  render() {
+    return (
+        <HomePage />
+    );
+  }
 }
 
 const appDiv = document.getElementById("app");
-render(<App />, appDiv)
+render(<App />, appDiv);
