@@ -1,7 +1,16 @@
 import React, { Component } from "react";
 import { render } from "react-dom";
 import HomePage from "./HomePage";
-import { BrowserRouter as Router } from 'react-router-dom'
+import {
+    BrowserRouter as Router,
+    Routes,
+    Route,
+    Link,
+    Redirect,
+  } from "react-router-dom";
+import RoomJoinPage from "./RoomJoinPage";
+import { Home } from "@material-ui/icons";
+import CreateRoomPage from "./CreateRoomPage";
 
 export default class App extends Component {
   constructor(props) {
@@ -10,10 +19,19 @@ export default class App extends Component {
 
   render() {
     return (
-        <HomePage />
+        <Router>
+            <Routes>
+                <Route path="" element={<HomePage />}/>
+                <Route path="join/" element={<RoomJoinPage />}/>
+                <Route path="create/" element={<CreateRoomPage />}/>
+            </Routes>
+        </Router>
     );
   }
 }
 
 const appDiv = document.getElementById("app");
-render(<App />, appDiv);
+render(
+    <App />
+    ,appDiv
+);
