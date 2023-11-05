@@ -3,7 +3,7 @@ import RoomJoinPage from "./RoomJoinPage";
 import CreateRoomPage from "./CreateRoomPage";
 import Room from "./Room";
 import { Grid, Button, ButtonGroup, Typography } from "@material-ui/core";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, Navigate } from "react-router-dom";
 
 export default function HomePage() {
   const [roomCode, setRoomCode] = useState(null);
@@ -43,5 +43,6 @@ export default function HomePage() {
     );
   };
 
-  return roomCode != null ? navigate("/room/" + roomCode) : renderHomePage();
+  const path = "/room/" + roomCode;
+  return roomCode != null ? <Navigate to={path} /> : renderHomePage();
 }
