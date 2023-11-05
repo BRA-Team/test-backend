@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
-function Room() {
+export default function Room() {
   const { roomCode } = useParams();
   const [roomDetails, setRoomDetails] = useState({
     votesToSkip: 2,
@@ -42,5 +42,3 @@ function Room() {
     </div>
   );
 }
-
-export default Room;

@@ -1,15 +1,16 @@
 import React, { useState } from "react";
-import Button from "@material-ui/core/Button";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
-import TextField from "@material-ui/core/TextField";
-import FormHelperText from "@material-ui/core/FormHelperText";
-import FormControl from "@material-ui/core/FormControl";
-import Link from "@material-ui/core/Link";
-import Radio from "@material-ui/core/Radio";
-import RadioGroup from "@material-ui/core/RadioGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import { useNavigate } from "react-router-dom";
+import {
+  TextField,
+  Button,
+  Grid,
+  Typography,
+  FormHelperText,
+  FormControl,
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+} from "@material-ui/core";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function CreateRoomPage() {
   const defaultVotes = 2;
@@ -34,6 +35,7 @@ export default function CreateRoomPage() {
         guest_can_pause: guestCanPause,
       }),
     };
+
     fetch("/api/create-room/", requestOptions)
       .then((response) => response.json())
       .then((data) => navigate("/room/" + data.code));
@@ -98,7 +100,12 @@ export default function CreateRoomPage() {
         </Button>
       </Grid>
       <Grid item xs={12} align="center">
-        <Button color="secondary" variant="contained" to="/" component={Link}>
+        <Button
+          variant="contained"
+          color="secondary"
+          to="/home/"
+          component={Link}
+        >
           Back
         </Button>
       </Grid>

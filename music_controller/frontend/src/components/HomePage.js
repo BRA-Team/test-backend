@@ -1,22 +1,5 @@
-import React, { Component } from "react";
-import RoomJoinPage from "./RoomJoinPage";
-import CreateRoomPage from "./CreateRoomPage";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Link,
-  Redirect,
-} from "react-router-dom";
+import React from "react";
 
-export default class HomePage extends Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    return (
-        <h1>This is homeeee</h1>
-    );
-  }
+export default function RoomJoinPage() {
+  return <h1>This is Homeee</h1>;
 }
