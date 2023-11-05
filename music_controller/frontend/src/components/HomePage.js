@@ -11,12 +11,13 @@ export default function HomePage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      fetch("/api/user-in-room")
+      fetch("/api/user-in-room/")
         .then((response) => response.json())
         .then((data) => {
           setRoomCode(data.code);
         });
     };
+
     fetchData();
   }, []);
 
