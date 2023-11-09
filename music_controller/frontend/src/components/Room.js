@@ -135,7 +135,6 @@ export default function Room(props) {
       </Grid>
     );
   };
-  console.log(roomDetails.showSettings.toString());
 
   return roomDetails.showSettings == true ? renderSettings() : renderRoom();
 }

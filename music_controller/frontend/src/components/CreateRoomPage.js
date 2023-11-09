@@ -11,11 +11,13 @@ import {
   FormControlLabel,
 } from "@material-ui/core";
 import { Link, useNavigate } from "react-router-dom";
+import { Collapse, Alert } from "@material-ui/core";
 
-export default function CreateRoomPage() {
-  const defaultVotes = 2;
-  const [votes, setVotes] = useState(defaultVotes);
-  const [guestCanPause, setGuestCanPause] = useState(true);
+function CreateRoomPage(props) {
+  const [votes, setVotes] = useState(props.votesToSkip);
+  const [guestCanPause, setGuestCanPause] = useState(props.guestCanPause);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [successMsg, setSuccesSMsg] = useState("");
   const navigate = useNavigate();
 
   const handleVotesChange = (e) => {
@@ -41,11 +43,96 @@ export default function CreateRoomPage() {
       .then((data) => navigate("/room/" + data.code));
   };
 
+  const handleUpdateButtonPressed = () => {
+    const requestOptions = {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        votes_to_skip: votes,
+        guest_can_pause: guestCanPause,
+        code: props.code,
+      }),
+    };
+
+    fetch("/api/update-room/", requestOptions)
+      .then((response) => response.json())
+      .then((response) => {
+        if (response.ok) {
+          setSuccesMsg("Room updated successfully");
+        } else {
+          setErrMsg("Error updating room...");
+        }
+      });
+  };
+
+  const renderCreateButtons = () => {
+    return (
+      <Grid container spacing={1}>
+        <Grid item xs={12} align="center">
+          <Button
+            color="primary"
+            variant="contained"
+            onClick={handleRoomButtonPressed}
+          >
+            Create A Room
+          </Button>
+        </Grid>
+        <Grid item xs={12} align="center">
+          <Button
+            variant="contained"
+            color="secondary"
+            to="/home/"
+            component={Link}
+          >
+            Back
+          </Button>
+        </Grid>
+      </Grid>
+    );
+  };
+
+  const renderUpdateButtons = () => {
+    return (
+      <Grid item xs={12} align="center">
+        <Button
+          color="primary"
+          variant="contained"
+          onClick={handleUpdateButtonPressed}
+        >
+          Update
+        </Button>
+      </Grid>
+    );
+  };
+
+  const title = props.update ? "Update Room" : "Create Room";
+
   return (
     <Grid container spacing={1}>
       <Grid item xs={12} align="center">
+        <Collapse in={errorMsg != "" || successMsg != ""}>
+          {successMsg != "" ? (
+            <Alert
+              severity="success"
+              onClose={() => {
+                setSuccesSMsg("");
+              }}
+            >
+              {successMsg}
+            </Alert>
+          ) : (
+            <Alert
+              severity="error"
+              onClose={() => {
+                setErrorMsg("");
+              }}
+            >
+              {errorMsg}
+            </Alert>
+          )}
+        </Collapse>
         <Typography component="h4" variant="h4">
-          Create a Room
+          {title}
         </Typography>
       </Grid>
       <Grid item xs={12} align="center">
@@ -79,7 +166,7 @@ export default function CreateRoomPage() {
             required={true}
             type="number"
             onChange={handleVotesChange}
-            defaultValue={defaultVotes}
+            defaultValue={votes}
             inputProps={{
               min: 1,
               style: { textAlign: "center" },
@@ -90,25 +177,17 @@ export default function CreateRoomPage() {
           </FormHelperText>
         </FormControl>
       </Grid>
-      <Grid item xs={12} align="center">
-        <Button
-          color="primary"
-          variant="contained"
-          onClick={handleRoomButtonPressed}
-        >
-          Create A Room
-        </Button>
-      </Grid>
-      <Grid item xs={12} align="center">
-        <Button
-          variant="contained"
-          color="secondary"
-          to="/home/"
-          component={Link}
-        >
-          Back
-        </Button>
-      </Grid>
+      {props.update ? renderUpdateButtons() : renderCreateButtons()}
     </Grid>
   );
 }
+
+CreateRoomPage.defaultProps = {
+  votesToSkip: 2,
+  guestCanPause: true,
+  update: false,
+  roomCode: null,
+  updateCallback: () => {},
+};
+
+export default CreateRoomPage;
