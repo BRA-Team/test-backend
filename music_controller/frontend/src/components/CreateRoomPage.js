@@ -11,7 +11,8 @@ import {
   FormControlLabel,
 } from "@material-ui/core";
 import { Link, useNavigate } from "react-router-dom";
-import { Collapse, Alert } from "@material-ui/core";
+import { Collapse } from "@material-ui/core";
+import { Alert } from "@material-ui/lab";
 
 function CreateRoomPage(props) {
   const [votes, setVotes] = useState(props.votesToSkip);
@@ -50,19 +51,17 @@ function CreateRoomPage(props) {
       body: JSON.stringify({
         votes_to_skip: votes,
         guest_can_pause: guestCanPause,
-        code: props.code,
+        code: props.roomCode,
       }),
     };
-
-    fetch("/api/update-room/", requestOptions)
-      .then((response) => response.json())
-      .then((response) => {
-        if (response.ok) {
-          setSuccesMsg("Room updated successfully");
-        } else {
-          setErrMsg("Error updating room...");
-        }
-      });
+    fetch("/api/update-room/", requestOptions).then((response) => {
+      if (response.ok) {
+        setSuccesSMsg("Room updated successfully");
+      } else {
+        setErrorMsg("Failed to update");
+      }
+      props.updateCallback();
+    });
   };
 
   const renderCreateButtons = () => {
@@ -142,7 +141,7 @@ function CreateRoomPage(props) {
           </FormHelperText>
           <RadioGroup
             row
-            defaultValue="true"
+            defaultValue={props.guestCanPause.toString()}
             onChange={handleGuestCanPauseChange}
           >
             <FormControlLabel

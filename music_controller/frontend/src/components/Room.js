@@ -18,24 +18,23 @@ export default function Room(props) {
     getRoomDetails();
   }, []);
 
-  const getRoomDetails = async () => {
-    try {
-      const response = await fetch(`/api/get-room?code=${roomCode}`);
-      if (!response.ok) {
-        //roomCode = null;
-        navigate("/home/");
-        return;
-      }
-      const data = await response.json();
-      setRoomDetails({
-        votesToSkip: data.votes_to_skip,
-        guestCanPause: data.guest_can_pause,
-        isHost: data.is_host,
-        showSettings: false,
+  const getRoomDetails = () => {
+    return fetch("/api/get-room/" + "?code=" + roomCode)
+      .then((response) => {
+        if (!response.ok) {
+          //this.props.leaveRoomCallback();
+          navigate("/home/");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setRoomDetails({
+          votesToSkip: data.votes_to_skip,
+          guestCanPause: data.guest_can_pause,
+          isHost: data.is_host,
+          showSettings: roomDetails.showSettings,
+        });
       });
-    } catch (error) {
-      console.error(error);
-    }
   };
 
   const leaveButtonPressed = async () => {
@@ -68,7 +67,7 @@ export default function Room(props) {
             update={true}
             votesToSkip={roomDetails.votesToSkip}
             guestCanPause={roomDetails.guestCanPause}
-            roomCode={roomDetails.roomCode}
+            roomCode={roomCode}
             updateCallback={getRoomDetails}
           />
         </Grid>
