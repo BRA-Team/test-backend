@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Grid, Button, Typography } from "@material-ui/core";
 import CreateRoomPage from "./CreateRoomPage";
+import MusicPlayer from "./MusicPlayer";
 
 export default function Room(props) {
   const { roomCode } = useParams();
@@ -14,9 +15,17 @@ export default function Room(props) {
     showSettings: false,
   });
   const [spotifyAuthenticated, setSpotifyAuth] = useState(false);
+  const [song, setSong] = useState({});
 
   useEffect(() => {
     getRoomDetails();
+    getCurrentSong();
+
+    const intreval = setInterval(getCurrentSong, 1000);
+
+    return () => {
+      clearInterval(intreval);
+    };
   }, [roomCode]);
 
   const getRoomDetails = () => {
@@ -33,11 +42,33 @@ export default function Room(props) {
           votesToSkip: data.votes_to_skip,
           guestCanPause: data.guest_can_pause,
           isHost: data.is_host,
-          showSettings: roomDetails.showSettings,
         });
         if (data.is_host) {
           authenticateSpotify();
         }
+      });
+  };
+
+  const getCurrentSong = () => {
+    fetch("/spotify/current-song")
+      .then((response) => {
+        if (!response.ok) {
+          // Handle the case when the response is not OK (e.g., 404 or other errors)
+          // You can return an empty object or handle the error as needed
+          throw new Error("Response not OK");
+        } else {
+          return response.json(); // Parse the JSON data
+        }
+      })
+      .then((data) => {
+        // Check if the response is not empty before setting the state
+        if (Object.keys(data).length > 0) {
+          setSong(data);
+        }
+      })
+      .catch((error) => {
+        // Handle any errors that occurred during the fetch or JSON parsing
+        console.error("Error in getCurrentSong:", error);
       });
   };
 
@@ -125,21 +156,7 @@ export default function Room(props) {
             Code: {roomCode}
           </Typography>
         </Grid>
-        <Grid item xs={12} align="center">
-          <Typography variant="h6" component="h6">
-            Votes: {roomDetails.votesToSkip}
-          </Typography>
-        </Grid>
-        <Grid item xs={12} align="center">
-          <Typography variant="h6" component="h6">
-            Guest Can Pause: {roomDetails.guestCanPause.toString()}
-          </Typography>
-        </Grid>
-        <Grid item xs={12} align="center">
-          <Typography variant="h6" component="h6">
-            Host: {roomDetails.isHost.toString()}
-          </Typography>
-        </Grid>
+        <MusicPlayer {...song} />
         {roomDetails.isHost ? renderSettingsButton() : null}
         <Grid item xs={12} align="center">
           <Button
